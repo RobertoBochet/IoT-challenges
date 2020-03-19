@@ -93,7 +93,7 @@ implementation {
 			// cast payload to custom message
 			cm = (custom_message_t*)payload;
 
-
+			printf("I received message from %d\n", cm->sender_id);
 			// do something
 		}
 
