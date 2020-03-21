@@ -14,12 +14,15 @@ module CoreC @safe()
 		interface AMSend;
 		interface Packet;
 		interface Receive; 
+
+		interface Leds;
 	}
 }
 
 implementation {
 	message_t packet;
 	bool is_buffer_empty = TRUE;
+	uint16_t counter = 0;
   
 	event void Boot.booted()
 	{
@@ -62,10 +65,12 @@ implementation {
 		// creates the packet		
 		cm = (custom_message_t*) call Packet.getPayload(&packet, sizeof(custom_message_t));
 
+		// checks if the packet was created
+		if(cm == NULL) return;
+
 		// populates the packet
 		cm->sender_id = TOS_NODE_ID;
-		/* set stuff */
-
+		cm->counter = counter;
 
 		// tries to send the packet
 		if (call AMSend.send(AM_BROADCAST_ADDR, &packet, sizeof(custom_message_t)) == SUCCESS)
@@ -90,11 +95,30 @@ implementation {
 		if (len == sizeof(custom_message_t)) {
 			printf("The package seems valid\n");
 
+			// increment counter
+			/*This operation is not guranted atomic*/
+			counter++;
+
 			// cast payload to custom message
 			cm = (custom_message_t*)payload;
 
 			printf("I received message from %d\n", cm->sender_id);
-			// do something
+
+			// if counter is a multiple of 10 then switch off all leds
+			if(cm->counter % 10 == 0)
+				call Leds.set(0);
+
+			// if sender is 1 then toogle led 0
+			else if(cm->sender_id == 1)
+				call Leds.led0Toggle();
+
+			// if sender is 2 then toogle led 1
+			else if(cm->sender_id == 2)
+				call Leds.led1Toggle();
+				
+			// if sender is 3 then toogle led 2
+			else if(cm->sender_id == 3)
+				call Leds.led2Toggle();
 		}
 
 		return msg; 
