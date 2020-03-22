@@ -1,3 +1,5 @@
+#define AM_PARAMETER 6
+
 configuration AppC
 {}
 
@@ -6,8 +8,8 @@ implementation
 	components MainC;
 	components CoreC;
 	components ActiveMessageC;
-	components new AMSenderC(6);
-	components new AMReceiverC(6);
+	components new AMSenderC(AM_PARAMETER);
+	components new AMReceiverC(AM_PARAMETER);
 	components new TimerMilliC();
 	components LedsC;
 
