@@ -1,2 +1,2 @@
-COMPONENT=AppC
+COMPONENT=sendAckAppC
 include $(MAKERULES)
