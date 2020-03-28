@@ -96,11 +96,11 @@ for line in lines:
             mid_compl = 0;
             sys.stdout.write ("#")
             sys.stdout.flush()
-        for i in range(1, 3):
+        for i in [1,2]:
             t.getNode(i).addNoiseTraceReading(val)
 print "Done!";
 
-for i in range(1, 3):
+for i in [1,2]:
     print ">>>Creating noise model for node:",i;
     t.getNode(i).createNoiseModel()
 
@@ -110,4 +110,3 @@ for i in range(0,1200):
 	t.runNextEvent()
 	
 print "\n\n\nSimulation finished!";
-
