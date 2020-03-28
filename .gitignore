@@ -1,4 +1,6 @@
-/build
-*.csc
-app.xml
+build/
 simbuild/
+app.xml
+*.csc
+*.pyc
+*.so
