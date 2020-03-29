@@ -22,15 +22,14 @@ implementation {
 	uint8_t counter=0;
 	message_t packet;
 
-	void sendReq();
-	void sendResp();
+	void sendMessage(am_addr_t, uint8_t, uint16_t, uint16_t);
 
-
-	//***************** Send request function ********************//
-	void sendReq() {
+	//****************** Task send message *****************//
+	void sendMessage(am_addr_t _dest, uint8_t _type, uint16_t _counter, uint16_t _data)
+	{
 		custom_msg_t* p;
 
-		dbg("radio_send", "Try to send a new request\n");
+		dbg("radio_send", "Try to send a new %s\n", _type == MSG_TYPE_REQ ? "request" : "response");
 
 		// creates the packet		
 		p = (custom_msg_t*) call Packet.getPayload(&packet, sizeof(custom_msg_t));
@@ -39,34 +38,30 @@ implementation {
 		if(p == NULL) return;
 
 		// populates the packet
-		p->msg_type = MSG_TYPE_REQ;
-		p->msg_counter = counter;
+		p->msg_type = _type;
+		p->msg_counter = _counter;
+		if(_type == MSG_TYPE_RESP) p->value = _data;
+
+		dbg_clear("radio_send", "\tcounter:\t%d\n", _counter);
+		if(_type == MSG_TYPE_RESP) dbg_clear("radio_send", "\tvalue:\t\t%d\n", _data);
 
 		// set packet to request ACK
 		call PacketAcknowledgements.requestAck(&packet);
 
+		dbg_clear("radio_send", "\tset ACK bit\n");
+
 		// tries to send the packet
-		if (call AMSend.send(MOTE_RESP, &packet, sizeof(custom_msg_t)) == SUCCESS)
-			dbg("radio_send", "Request sent\n");
+		if (call AMSend.send(_dest, &packet, sizeof(custom_msg_t)) == SUCCESS)
+			dbg_clear("radio_send", "\tscheduled message to send\n");
 
 		else dbgerror("radio_send", "Send error!\n");
-	}
-
-	//****************** Task send response *****************//
-	void sendResp() {
-		/* This function is called when we receive the REQ message.
-		* Nothing to do here.
-		* `call Read.read()` reads from the fake sensor.
-		* When the reading is done it raise the event read one.
-		*/
-		call Read.read();
 	}
 
 	//***************** Boot interface ********************//
 	event void Boot.booted() {
 		dbg("boot","Application booted.\n");
 
-		dbg("boot", "I am %d\n", TOS_NODE_ID);
+		dbg_clear("boot", "\tI am %s\n", TOS_NODE_ID == MOTE_REQ ? "MOTE_REQ" : "MOTE_RESP");
 
 		// start the wireless interface
 		call SplitControl.start();
@@ -74,7 +69,7 @@ implementation {
 
 	//***************** SplitControl interface ********************//
 	event void SplitControl.startDone(error_t err) {
-		// check if the wireless interface started succefully 
+		// check if the wireless interface started successfully 
 		if (err != SUCCESS) {
 			dbg("radio", "Fail to start AMControl\n");
 
@@ -102,9 +97,8 @@ implementation {
 		counter++;
 
 		// send request
-		sendReq();
+		sendMessage(MOTE_RESP, MSG_TYPE_REQ, counter, 0);
 	}
-
 
 	//********************* AMSend interface ****************//
 	event void AMSend.sendDone(message_t* buf,error_t err) {
@@ -147,18 +141,18 @@ implementation {
 
 			// If the message is received by MOTE_REQ
 			if(p->msg_type == MSG_TYPE_RESP && TOS_NODE_ID == MOTE_REQ) {
-				dbg_clear("radio_rec", "\tcounter: %d\n", p->msg_counter);
-				dbg_clear("radio_rec", "\tvalue: %d\n", p->value);
+				dbg_clear("radio_rec", "\tcounter:\t%d\n", p->msg_counter);
+				dbg_clear("radio_rec", "\tvalue:\t\t%d\n", p->value);
 
 			// If the message is received by MOTE_RESP
 			} else if(p->msg_type == MSG_TYPE_REQ && TOS_NODE_ID == MOTE_RESP) {
-				dbg_clear("radio_rec", "\tcounter: %d\n", p->msg_counter);
+				dbg_clear("radio_rec", "\tcounter:\t%d\n", p->msg_counter);
 
 				// save counter
 				counter = p->msg_counter;
 
 				// read sensor value
-				sendResp();
+				call Read.read();
 			}
 		}
 
@@ -167,29 +161,7 @@ implementation {
 
   //************************* Read interface **********************//
 	event void Read.readDone(error_t result, uint16_t data) {
-		custom_msg_t* p;
-
-		dbg("radio_send", "Try to send a respose\n");
-
-		// creates the packet		
-		p = (custom_msg_t*) call Packet.getPayload(&packet, sizeof(custom_msg_t));
-
-		// checks if the packet was created
-		if(p == NULL) return;
-
-		// populates the packet
-		p->msg_type = MSG_TYPE_RESP;
-		p->msg_counter = counter;
-		p->value = data;
-
-		// set packet to request ACK
-		call PacketAcknowledgements.requestAck(&packet);
-
-		// tries to send the packet
-		if (call AMSend.send(MOTE_REQ, &packet, sizeof(custom_msg_t)) == SUCCESS)
-			dbg("radio_send", "Respose sent\n");
-
-		else dbgerror("radio_send", "Send error!\n");
+		sendMessage(MOTE_REQ, MSG_TYPE_RESP, counter, data);
 	}
 
 	//***************** PendingShutdownTimer interface ********************//
