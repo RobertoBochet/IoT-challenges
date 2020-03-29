@@ -29,4 +29,3 @@ implementation {
 	// sensor
 	App.Read -> FakeSensorC;
 }
-

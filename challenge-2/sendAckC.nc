@@ -1,8 +1,5 @@
 #include "sendAck.h"
 
-#include "sendAck.h"
-#include "Timer.h"
-
 module sendAckC {
 	uses {
 		interface Boot;
@@ -18,11 +15,11 @@ module sendAckC {
 
 		interface Read<uint16_t>;
 	}
+}
 
-	} implementation {
+implementation {
 
 	uint8_t counter=0;
-	uint8_t rec_id;
 	message_t packet;
 
 	void sendReq();
@@ -88,7 +85,7 @@ module sendAckC {
 
 		dbg("radio", "AM control is ready\n");
 
-		// start timer if this is the mote #1
+		// start timer if this is the MOTE_REQ
 		if(TOS_NODE_ID == MOTE_REQ) {			
 			dbg("timer", "Start timer\n");
 			call MilliTimer.startPeriodic(1000);
@@ -111,19 +108,23 @@ module sendAckC {
 
 	//********************* AMSend interface ****************//
 	event void AMSend.sendDone(message_t* buf,error_t err) {
+		// check if the packet was sent
 		if (&packet == buf && err == SUCCESS) {
 
 			dbg("radio_send", "Packet sent at time %s \n", sim_time_string());
 
+			// check if there was an ACK as response
 			if(call PacketAcknowledgements.wasAcked(buf)) {
 				dbg_clear("radio_ack", "\tACK was received\n");
 
+				// if this is the MOTE_REQ, stop the periodic request timer
 				if(TOS_NODE_ID == MOTE_REQ) {
 					dbg("timer", "Stop timer\n");
 
 					call MilliTimer.stop();
 				}
 				
+				// schedule the shutdown
 				call PendingShutdownTimer.startOneShot(1000);
 
 			} else dbg_clear("radio_ack", "\tNo ACK received\n");
@@ -139,15 +140,18 @@ module sendAckC {
 
 		// checks if the payload is castable to custom message
 		if (len == sizeof(custom_msg_t)) {
-			dbg_clear("radio_rec", "\tthis seems valid\n");
+			dbg_clear("radio_rec", "\tseems valid\n");
 			
 			// cast payload to custom message
 			p = (custom_msg_t*)payload;
 
-			if(p->msg_type == MSG_TYPE_RESP && TOS_NODE_ID == MOTE_REQ)
-				dbg("radio_rec", "Sensor value received\n");
+			// If the message is received by MOTE_REQ
+			if(p->msg_type == MSG_TYPE_RESP && TOS_NODE_ID == MOTE_REQ) {
+				dbg_clear("radio_rec", "\tcounter: %d\n", p->msg_counter);
+				dbg_clear("radio_rec", "\tvalue: %d\n", p->value);
 
-			else if(p->msg_type == MSG_TYPE_REQ && TOS_NODE_ID == MOTE_RESP) {
+			// If the message is received by MOTE_RESP
+			} else if(p->msg_type == MSG_TYPE_REQ && TOS_NODE_ID == MOTE_RESP) {
 				dbg_clear("radio_rec", "\tcounter: %d\n", p->msg_counter);
 
 				// save counter
