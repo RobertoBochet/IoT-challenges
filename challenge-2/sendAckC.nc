@@ -23,6 +23,7 @@ implementation {
 	message_t packet;
 
 	void sendMessage(am_addr_t, uint8_t, uint16_t, uint16_t);
+	void shutdown();
 
 	//****************** Task send message *****************//
 	void sendMessage(am_addr_t _dest, uint8_t _type, uint16_t _counter, uint16_t _data)
@@ -48,13 +49,21 @@ implementation {
 		// set packet to request ACK
 		call PacketAcknowledgements.requestAck(&packet);
 
-		dbg_clear("radio_send", "\tset ACK bit\n");
+		dbg_clear("radio_ack", "\tset ACK bit\n");
 
 		// tries to send the packet
 		if (call AMSend.send(_dest, &packet, sizeof(custom_msg_t)) == SUCCESS)
 			dbg_clear("radio_send", "\tscheduled message to send\n");
 
 		else dbgerror("radio_send", "Send error!\n");
+	}
+
+	void shutdown()
+	{
+		// stop the wireless interface
+		call SplitControl.stop();
+
+		dbg("boot", "Bye bye!\n");
 	}
 
 	//***************** Boot interface ********************//
@@ -116,10 +125,10 @@ implementation {
 					dbg("timer", "Stop timer\n");
 
 					call MilliTimer.stop();
+				} else if (TOS_NODE_ID == MOTE_RESP) {
+					// schedule the shutdown
+					call PendingShutdownTimer.startOneShot(1000);
 				}
-				
-				// schedule the shutdown
-				call PendingShutdownTimer.startOneShot(1000);
 
 			} else dbg_clear("radio_ack", "\tNo ACK received\n");
 
@@ -143,6 +152,9 @@ implementation {
 			if(p->msg_type == MSG_TYPE_RESP && TOS_NODE_ID == MOTE_REQ) {
 				dbg_clear("radio_rec", "\tcounter:\t%d\n", p->msg_counter);
 				dbg_clear("radio_rec", "\tvalue:\t\t%d\n", p->value);
+
+				// the task of MOTE_REQ is done, schedule the shutdown
+				call PendingShutdownTimer.startOneShot(1000);
 
 			// If the message is received by MOTE_RESP
 			} else if(p->msg_type == MSG_TYPE_REQ && TOS_NODE_ID == MOTE_RESP) {
@@ -168,9 +180,6 @@ implementation {
 	event void PendingShutdownTimer.fired() {
 		dbg("timer", "Shutdown timer fired\n");
 
-		// stop the wireless interface
-		call SplitControl.stop();
-
-		dbg("boot", "Bye bye!\n");
+		shutdown();
 	}
 }
