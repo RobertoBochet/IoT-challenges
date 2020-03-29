@@ -34,8 +34,6 @@ t.init();
 out = sys.stdout;
 
 #Add debug channel
-print "Activate debug message on channel init"
-t.addChannel("init",out);
 print "Activate debug message on channel boot"
 t.addChannel("boot",out);
 print "Activate debug message on channel radio"
@@ -46,10 +44,6 @@ print "Activate debug message on channel radio_ack"
 t.addChannel("radio_ack",out);
 print "Activate debug message on channel radio_rec"
 t.addChannel("radio_rec",out);
-print "Activate debug message on channel radio_pack"
-t.addChannel("radio_pack",out);
-print "Activate debug message on channel role"
-t.addChannel("role",out);
 print "Activate debug message on channel timer"
 t.addChannel("timer",out);
 
