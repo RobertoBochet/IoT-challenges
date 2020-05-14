@@ -10,11 +10,11 @@ Given a Wireshark session data `data.pcapng`, answer to some question concerning
 
 - Does the client receive the response of message No. 6949?
 
-- How many replies of type connectable and result code “Content” are received by the server “localhost”?
+- How many replies of type confinable and result code “Content” are received by the server “localhost”?
 
 ## MQTT
 
-- How many messages with the topic “factory/department/+” are published by a client with user name: “jane”?
+- How many messages containing the topic “factory/department*/+” are published by a client with user name: “jane”?
 
 - How many clients connected to the broker “hivemq” have specified a will message?
 
