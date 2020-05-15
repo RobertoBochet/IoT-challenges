@@ -72,4 +72,18 @@ Since, QoS is equal 0 (at most once) is impossible to determinate if a message i
 
 #### 9) What is the average message length of a connect msg using mqttv5 protocol? Why messages have different size?
 
+Message length in mqtt packet is expressed in the fixed header after the flags with a codification from 1 to 4 bytes, it indicates the remaining number of bytes of the packet (variable header plus payload).
+
+The first bytes after the fixed header composing the variable header and for the mqttv5 connect message has a fixed length of 10 bytes.
+
+The remaining bytes composing the **payload that has a variable length**. It must contain a variable length `client ID` and can contain some property (e.g. will parameters, authentication data).
+
+```
+mqtt.msgtype == 1  && mqtt.ver == 5
+```
+
+So we select only mqtt connect packages of version 5. With a fast calculation, we find the average message length.
+
+**The answer is 30 bytes**
+
 #### 10) Why there aren’t any REQ/RESP pings in the pcap?
