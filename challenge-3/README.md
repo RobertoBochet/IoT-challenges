@@ -10,6 +10,8 @@ Given a Wireshark session data `data.pcapng`, answer to some question concerning
 
 #### 1) What’s the difference between the message with MID: 3978 and the one with MID: 22636?
 
+**The package `3978` requires an ACK, the `22636` not.**
+
 #### 2) Does the client receive the response of message No. 6949?
 
 #### 3) How many replies of type confinable and result code “Content” are received by the server “localhost”?
