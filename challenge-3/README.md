@@ -14,6 +14,20 @@ Given a Wireshark session data `data.pcapng`, answer to some question concerning
 
 #### 2) Does the client receive the response of message No. 6949?
 
+```
+frame.number == 6949
+```
+
+With this we retrieve the message and get the request token `6f:b6:3c:18`.
+
+```
+coap.token == 6f:b6:3c:18
+```
+
+So we can find the response from the server. It is the message number `6953` and we can verify the success of the operation. The server responses with error `4.05 Method Not Allowed`.
+
+**The client receive as response an error**
+
 #### 3) How many replies of type confinable and result code “Content” are received by the server “localhost”?
 
 ### MQTT
