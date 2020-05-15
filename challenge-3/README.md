@@ -8,11 +8,11 @@ Given a Wireshark session data `data.pcapng`, answer to some question concerning
 
 ### CoAP
 
-### 1) What’s the difference between the message with MID: 3978 and the one with MID: 22636?
+#### 1) What’s the difference between the message with MID: 3978 and the one with MID: 22636?
 
-### 2) Does the client receive the response of message No. 6949?
+#### 2) Does the client receive the response of message No. 6949?
 
-### 3) How many replies of type confinable and result code “Content” are received by the server “localhost”?
+#### 3) How many replies of type confinable and result code “Content” are received by the server “localhost”?
 
 ### MQTT
 
@@ -30,14 +30,33 @@ We find out that there are not packet exchanged matching this pattern.
 
 **The answer is zero**
 
-### 5) How many clients connected to the broker “hivemq” have specified a will message?
+#### 5) How many clients connected to the broker “hivemq” have specified a will message?
 
-### 6) How many publishes with QoS 1 don’t receive the ACK?
+First we need the ip of server `broker.hivemq.com`, we can retrieve it exploit dns response
 
-### 7) How many last will messages with QoS set to 0 are actually delivered?
+```
+dns.a && dns.qry.name == "broker.hivemq.com"
+```
 
-### 8) Are all the messages with QoS > 0 published by the client “4m3DWYzWr40pce6OaBQAfk” correctly delivered to the subscribers?
+We consider only ipv4 response and find two ip `18.185.199.22` and `3.120.68.56`.
+Now, we can find the connections with `will flag` set that were sent to one of them ip.
 
-### 9) What is the average message length of a connect msg using mqttv5 protocol? Why messages have different size?
+```
+(ip.dst == 18.185.199.22 || ip.dst == 3.120.68.56) && mqtt.conflag.willflag == 1 
+```
 
-### 10) Why there aren’t any REQ/RESP pings in the pcap?
+So, we find 16 connections messages.
+
+*NB. We can notice that some connections are probably started from the same client*
+
+**The answer is 16**
+
+#### 6) How many publishes with QoS 1 don’t receive the ACK?
+
+#### 7) How many last will messages with QoS set to 0 are actually delivered?
+
+#### 8) Are all the messages with QoS > 0 published by the client “4m3DWYzWr40pce6OaBQAfk” correctly delivered to the subscribers?
+
+#### 9) What is the average message length of a connect msg using mqttv5 protocol? Why messages have different size?
+
+#### 10) Why there aren’t any REQ/RESP pings in the pcap?
