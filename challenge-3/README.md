@@ -64,6 +64,10 @@ mqtt.msgtype == 3 && mqtt.qos == 1 && mqtt.dupflag == 1
 
 #### 7) How many last will messages with QoS set to 0 are actually delivered?
 
+Since, QoS is equal 0 (at most once) is impossible to determinate if a message is delivered.
+
+**The answer is that is unverifiable**
+
 #### 8) Are all the messages with QoS > 0 published by the client “4m3DWYzWr40pce6OaBQAfk” correctly delivered to the subscribers?
 
 #### 9) What is the average message length of a connect msg using mqttv5 protocol? Why messages have different size?
