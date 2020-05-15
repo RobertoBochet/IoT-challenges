@@ -96,6 +96,8 @@ Set the ref time and masks we can easily find out that there are not subscribers
 
 **There are not subscribers to whom delivery the messages**
 
+*n.b. also if there were subscribers, set QoS to 2 doesn't guarantee that message is delivered to subscribers, but only to the broker*
+
 #### 9) What is the average message length of a connect msg using mqttv5 protocol? Why messages have different size?
 
 Message length in mqtt packet is expressed in the fixed header after the flags with a codification from 1 to 4 bytes, it indicates the remaining number of bytes of the packet (variable header plus payload).
