@@ -53,6 +53,15 @@ So, we find 16 connections messages.
 
 #### 6) How many publishes with QoS 1 don’t receive the ACK?
 
+In a publish message packets, the `DUP flag` is set only if the package is already sent and the current one is a resend attempt in consequence to not received `ACK`. 
+So, we need to get only publish message with `QoS` equal to 1 and `DUP flag` set.
+
+```
+mqtt.msgtype == 3 && mqtt.qos == 1 && mqtt.dupflag == 1
+```
+
+**The answer is 2**
+
 #### 7) How many last will messages with QoS set to 0 are actually delivered?
 
 #### 8) Are all the messages with QoS > 0 published by the client “4m3DWYzWr40pce6OaBQAfk” correctly delivered to the subscribers?
