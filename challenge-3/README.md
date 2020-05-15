@@ -28,7 +28,15 @@ So we can find the response from the server. It is the message number `6953` and
 
 **The client receive as response an error**
 
-#### 3) How many replies of type confinable and result code “Content” are received by the server “localhost”?
+#### 3) How many replies of type `confirmable` and result code “Content” are received by the server “localhost”?
+
+```
+ip.dst == 127.0.0.1 && coap.code == 69 && coap.type == 0
+```
+
+Find the package to `127.0.0.1`, with code content `2.05` and of type `confirmable`.
+
+**The answer is zero**
 
 ### MQTT
 
