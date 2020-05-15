@@ -115,3 +115,13 @@ So we select only mqtt connect packages of version 5. With a fast calculation, w
 **The answer is 30 bytes**
 
 #### 10) Why there aren't any REQ/RESP pings in the `pcap`?
+
+The entire sniffing lasts `166s`.
+
+```mqtt.msgtype == 1 && mqtt.kalive < 166```
+
+With the filter and same manual filtering to remove packages where `frame.time + mqtt.kalive > 166` we find `28` new connections. These requires to contact the broker before the end of the sniffing to survive.
+
+The mqtt protocol require that client must send to broker a `ping request` when it has passed the keep alive time by the last package exchanged with the broker. If it has passed 1.5 keep alive time, then the broker should disconnect the client.
+
+**So, if those connections are closed before keep alive timer elapsed, or there is a exchange of message before client and broker no `ping request` is required.**
