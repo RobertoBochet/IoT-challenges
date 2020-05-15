@@ -47,7 +47,7 @@ Now, we can find the connections with `will flag` set that were sent to one of t
 
 So, we find 16 connections messages.
 
-*NB. We can notice that some connections are probably started from the same client*
+*n.b. some connections could be started from the same client*
 
 **The answer is 16**
 
