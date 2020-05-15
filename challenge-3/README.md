@@ -70,6 +70,32 @@ Since, QoS is equal 0 (at most once) is impossible to determinate if a message i
 
 #### 8) Are all the messages with QoS > 0 published by the client “4m3DWYzWr40pce6OaBQAfk” correctly delivered to the subscribers?
 
+```
+mqtt.clientid == "4m3DWYzWr40pce6OaBQAfk"
+```
+
+We find the connection package, from it we can find out that the session is not persistent and retrieve the two end points, client `10.0.2.15:58313` and server `5.196.95.208:1883` which identify the TCP connection, Wireshark gives to this connection the stream index `67`.
+
+```
+tcp.stream == 67 && ip.src == 10.0.2.15 && mqtt.msgtype == 3 && mqtt.qos > 0
+```
+
+For this connection we find only one publish message with a QoS greater than 0 published by client. This message is published with retain unset and QoS of 2, we can also retrieve the message id `3`.
+
+```
+tcp.stream == 67 && mqtt.msgid == 3
+```
+
+The broker responded with a publish received, so we can be sure that it received the message.
+
+```
+mqtt.topic == "factory/department1/section1/deposit"
+```
+
+Set the ref time and masks we can easily find out that there are not subscribers to that topic at the moment when the client publish the message.
+
+**There are not subscribers to whom delivery the messages**
+
 #### 9) What is the average message length of a connect msg using mqttv5 protocol? Why messages have different size?
 
 Message length in mqtt packet is expressed in the fixed header after the flags with a codification from 1 to 4 bytes, it indicates the remaining number of bytes of the packet (variable header plus payload).
@@ -86,4 +112,4 @@ So we select only mqtt connect packages of version 5. With a fast calculation, w
 
 **The answer is 30 bytes**
 
-#### 10) Why there aren’t any REQ/RESP pings in the pcap?
+#### 10) Why there aren't any REQ/RESP pings in the `pcap`?
