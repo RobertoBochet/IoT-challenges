@@ -30,11 +30,14 @@ So we can find the response from the server. It is the message number `6953` and
 
 #### 3) How many replies of type `confirmable` and result code “Content” are received by the server “localhost”?
 
+If the server receives a request for a data, but it is not ready or is required an ACK also from the client, then the server can response with an ACK, with code content `2.0.5`, and provides the content to the client in a confirmable packet. The token for all request's packets must have same `token`.
+
 ```
 ip.dst == 127.0.0.1 && coap.code == 69 && coap.type == 0
 ```
 
 Find the package to `127.0.0.1`, with code content `2.05` and of type `confirmable`.
+
 
 **The answer is zero**
 
