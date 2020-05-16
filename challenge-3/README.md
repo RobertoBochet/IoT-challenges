@@ -151,4 +151,4 @@ With the filter and same manual filtering to remove packages where `frame.time +
 
 The mqtt protocol require that client must send to broker a `ping request` when it has passed the keep alive time by the last package exchanged with the broker. If it has passed 1.5 keep alive time, then the broker should disconnect the client.
 
-**So, if those connections are closed before keep alive timer elapsed, or there is a exchange of message before client and broker no `ping request` is required.**
+**So, if those connections are closed before keep alive timer elapsed, or there is a exchange of message before it client and broker no `ping request` is required.**
