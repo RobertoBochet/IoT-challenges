@@ -1,8 +1,6 @@
 # IoT - Challenge3
 
-## Goal
-
-Given a Wireshark session data `data.pcapng`, answer to some question concerning `CoAP` and `MQTT` protocols.
+Roberto Bochet 10453425
 
 ## Questions
 
@@ -37,7 +35,6 @@ ip.dst == 127.0.0.1 && coap.code == 69 && coap.type == 0
 ```
 
 Find the package to `127.0.0.1`, with code content `2.05` and of type `confirmable`.
-
 
 **The answer is zero**
 

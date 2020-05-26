@@ -35,8 +35,8 @@ With these two regex we can divide header and content payload.
 
 ### Final conversions
 
- The rows can contain multiple publish messages, so these are split.
+ The rows can contain multiple publish messages, and for this reason these are split.
  
  The researched topics are filtered and merged.
  
- After the hex decoding and json parsing, the value is sent to the thingspeak channel exploits MQTT.
+ After the hex decoding and json parsing, the value is sent to the thingspeak channel exploiting MQTT.
