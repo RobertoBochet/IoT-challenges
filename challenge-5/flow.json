@@ -1,0 +1,197 @@
+[
+    {
+        "id": "b5d1af96.0416f8",
+        "type": "tab",
+        "label": "Challenge 5",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "83df7dee.f5db6",
+        "type": "tcp in",
+        "z": "b5d1af96.0416f8",
+        "name": "get Cooja output",
+        "server": "client",
+        "host": "localhost",
+        "port": "60001",
+        "datamode": "stream",
+        "datatype": "utf8",
+        "newline": "\\n",
+        "topic": "",
+        "base64": false,
+        "x": 180,
+        "y": 100,
+        "wires": [
+            [
+                "f3807b85.92d828"
+            ]
+        ]
+    },
+    {
+        "id": "f3807b85.92d828",
+        "type": "function",
+        "z": "b5d1af96.0416f8",
+        "name": "parse input",
+        "func": "let r= /^([0-9]+):([0-9]{1,3})$/;\n\nlet result = r.exec(msg.payload)\n\nreturn {\n    node: parseInt(result[1]),\n    payload: parseInt(result[2])\n};",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 390,
+        "y": 100,
+        "wires": [
+            [
+                "1557b339.5da985"
+            ]
+        ]
+    },
+    {
+        "id": "3c0faa2d.2235be",
+        "type": "join",
+        "z": "b5d1af96.0416f8",
+        "name": "merge to rate limit",
+        "mode": "custom",
+        "build": "merged",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "accumulate": false,
+        "timeout": "20",
+        "count": "",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "num",
+        "reduceFixup": "",
+        "x": 590,
+        "y": 220,
+        "wires": [
+            [
+                "fad9d8e3.9aa4a8"
+            ]
+        ]
+    },
+    {
+        "id": "1557b339.5da985",
+        "type": "switch",
+        "z": "b5d1af96.0416f8",
+        "name": "filter high value",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "lte",
+                "v": "70",
+                "vt": "num"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 600,
+        "y": 100,
+        "wires": [
+            [
+                "62dc1a0.cfd58e8"
+            ]
+        ]
+    },
+    {
+        "id": "7b41ab35.320744",
+        "type": "debug",
+        "z": "b5d1af96.0416f8",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "x": 430,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "885a0ec4.fa93e8",
+        "type": "function",
+        "z": "b5d1af96.0416f8",
+        "name": "change structure",
+        "func": "let payload = {};\npayload[msg.field] = msg.payload;\n\nreturn {\n    payload: payload\n};",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 350,
+        "y": 220,
+        "wires": [
+            [
+                "3c0faa2d.2235be"
+            ]
+        ]
+    },
+    {
+        "id": "fad9d8e3.9aa4a8",
+        "type": "function",
+        "z": "b5d1af96.0416f8",
+        "name": "prepare mqtt message",
+        "func": "let channel = 1071551;\nlet api_key = \"XMJPNCXI1XVZUUPZ\";\n\nreturn {\n    topic: \"channels/\" + channel + \"/publish/\" + api_key,\n    payload:  Object.keys(msg.payload).map(k => encodeURIComponent(k) + \"=\" + encodeURIComponent(msg.payload[k])).join(\"&\")\n};",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 210,
+        "y": 340,
+        "wires": [
+            [
+                "7b41ab35.320744",
+                "ae2c7df2.5fa87"
+            ]
+        ]
+    },
+    {
+        "id": "62dc1a0.cfd58e8",
+        "type": "function",
+        "z": "b5d1af96.0416f8",
+        "name": "set field",
+        "func": "switch(msg.node) {\n    case 2:\n        msg.field = \"field1\";\n        break;\n    case 3:\n        msg.field = \"field2\";\n        break;\n}\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 160,
+        "y": 220,
+        "wires": [
+            [
+                "885a0ec4.fa93e8"
+            ]
+        ]
+    },
+    {
+        "id": "ae2c7df2.5fa87",
+        "type": "mqtt out",
+        "z": "b5d1af96.0416f8",
+        "name": "send to TS",
+        "topic": "",
+        "qos": "0",
+        "retain": "false",
+        "broker": "389add7f.9a5022",
+        "x": 610,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "389add7f.9a5022",
+        "type": "mqtt-broker",
+        "z": "",
+        "name": "",
+        "broker": "mqtt.thingspeak.com",
+        "port": "1883",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": false,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": ""
+    }
+]
