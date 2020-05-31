@@ -97,20 +97,6 @@
         ]
     },
     {
-        "id": "7b41ab35.320744",
-        "type": "debug",
-        "z": "b5d1af96.0416f8",
-        "name": "",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "true",
-        "x": 430,
-        "y": 420,
-        "wires": []
-    },
-    {
         "id": "885a0ec4.fa93e8",
         "type": "function",
         "z": "b5d1af96.0416f8",
@@ -138,7 +124,6 @@
         "y": 340,
         "wires": [
             [
-                "7b41ab35.320744",
                 "ae2c7df2.5fa87"
             ]
         ]
