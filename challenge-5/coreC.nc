@@ -13,6 +13,9 @@ module coreC {
 		interface Receive;
 
 		interface Timer<TMilli> as MilliTimer;
+
+		interface Random;
+		interface ParameterInit<uint16_t> as SeedInit;
 	}
 }
 
@@ -65,7 +68,7 @@ implementation {
 
 		// populates the packet
 		p->sender_id = TOS_NODE_ID;
-		p->value = 75;
+		p->value = (call Random.rand16()) / 655;
 
 		// tries to send the packet
 		if (call AMSend.send(1, &packet, sizeof(custom_msg_t)) == SUCCESS)

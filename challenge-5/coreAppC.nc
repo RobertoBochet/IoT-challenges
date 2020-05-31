@@ -11,6 +11,7 @@ implementation {
 	components ActiveMessageC;
 	components new AMSenderC(AM_PARAMETER);
 	components new AMReceiverC(AM_PARAMETER);
+	components RandomMlcgC;
 
 	/****** INTERFACES *****/
 	App.Boot -> MainC.Boot;
@@ -23,6 +24,10 @@ implementation {
 
 	// timer interface
 	App.MilliTimer -> TimerMilliC;
+
+	// random interface
+	App.Random -> RandomMlcgC;
+	App.SeedInit -> RandomMlcgC;
 
 	// print interface
 	components SerialPrintfC;
