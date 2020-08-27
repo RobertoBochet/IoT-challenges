@@ -5,7 +5,8 @@ configuration coreAppC {}
 implementation {
 	/****** COMPONENTS *****/
 	components MainC, coreC as App;
-	components new TimerMilliC();
+	components new TimerMilliC() as DataTimer;
+	components new TimerMilliC() as RetransmissionTimer;
 	components ActiveMessageC;
 	components new AMSenderC(AM_PARAMETER);
 	components new AMReceiverC(AM_PARAMETER);
@@ -21,7 +22,8 @@ implementation {
 	App.Receive -> AMReceiverC;
 
 	// timer interface
-	App.MilliTimer -> TimerMilliC;
+	App.DataTimer -> DataTimer;
+	App.RetransmissionTimer -> RetransmissionTimer;
 
 	// random interface
 	App.Random -> RandomMlcgC;
