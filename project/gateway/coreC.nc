@@ -69,7 +69,7 @@ implementation {
 
 		// aborts the relayed process, if the buffer is not empty
 		if (locked) {
-			printf("ERROR: The buffer is not empty, the packet cannot be relayed");
+			printf("ERROR: The buffer is not empty, the packet cannot be relayed\n");
 			return buf;
 		}
 
@@ -80,7 +80,7 @@ implementation {
 
 		// checks if the packet was created
 		if(p_out == NULL) {
-			printf("ERROR: Memory error");
+			printf("ERROR: Memory error\n");
 			locked = FALSE;
 			return buf;
 		}
