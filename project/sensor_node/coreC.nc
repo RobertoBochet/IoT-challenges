@@ -26,6 +26,28 @@ implementation {
 	message_t packet;
 	uint8_t last_msg_id;
 
+	void setupSensor() {
+		// set period
+		period = 500 * ((call Random.rand16()) / 2048) + 4000;
+
+		// set sensor type
+		switch(TOS_NODE_ID) {
+			case 2:
+				data_type = voltage;
+				break;
+			case 3:
+			case 4:
+				data_type = humidity;
+				break;
+			default:
+				data_type = temperature;
+		}
+	}
+
+	uint8_t getData() {
+		return (call Random.rand16()) / 256;
+	}
+
 	//***************** Boot interface ********************//
 	event void Boot.booted() {
 		printf("I am a sensor node with ID %d\n", TOS_NODE_ID);
@@ -33,9 +55,7 @@ implementation {
 		// init sequence message id
 		last_msg_id = 0;
 
-		// set period and data type
-		period = 500 * ((call Random.rand16()) / 2048) + 4000;
-		data_type = temperature;
+		setupSensor();
 
 		// start the wireless interface
 		call SplitControl.start();
@@ -61,9 +81,7 @@ implementation {
 
 	event void SplitControl.stopDone(error_t err){}
 
-	uint8_t getData() {
-		return (call Random.rand16()) / 655;
-	}
+	
 
 	bool preparePacket() {
 		data_msg_t* p;
