@@ -89,7 +89,6 @@ implementation {
 		p_out->msg_type = p_in->msg_type | 0b10;
 		p_out->msg_id = p_in->msg_id;
 		p_out->sensor_id = p_in->sensor_id;
-		p_out->gateway_id = TOS_NODE_ID;
 		p_out->data_type = p_in->data_type;
 		p_out->data = p_in->data;
 

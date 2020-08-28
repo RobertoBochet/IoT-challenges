@@ -80,7 +80,6 @@ implementation {
 	}
 
 	event void SplitControl.stopDone(error_t err){}
-
 	
 
 	bool preparePacket() {

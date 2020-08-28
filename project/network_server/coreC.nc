@@ -58,12 +58,10 @@ implementation {
 		// cast payload to custom message
 		p_in = (data_msg_t*)payload;
 
-		// if the package is not a gateway relay ignore it
-		if (p_in->msg_type != sensor_data_relayed) return buf;
+		// if the package is not a sensor data ignore it
+		if (p_in->msg_type & 0b01) return buf;
 
-		printf("A relayed message is came\n");
-		printf("From sensor with ID %d through gateway with ID %d\n", p_in->sensor_id, p_in->gateway_id);
-		printf("With a value of `%d`\n", p_in->data);
+		printf("A sensor data from sensor %d is came with a value of `%d`\n", p_in->sensor_id, p_in->data);
 
 		// sends data to node red
 		printf("#%d:%d:%d:%d#\n", p_in->msg_id, p_in->sensor_id, p_in->data_type, p_in->data);
@@ -93,7 +91,6 @@ implementation {
 		p_out->msg_type = ack;
 		p_out->msg_id = p_in->msg_id;
 		p_out->sensor_id = p_in->sensor_id;
-		p_out->gateway_id = 0;
 		p_out->data_type = 0;
 		p_out->data = 0;
 

@@ -18,7 +18,6 @@ typedef nx_struct {
 	nx_uint8_t msg_id;
 	nx_uint8_t msg_type;
 	nx_uint8_t sensor_id;
-	nx_uint8_t gateway_id;
 	nx_uint8_t data_type;
 	nx_uint8_t data;
 } data_msg_t;
