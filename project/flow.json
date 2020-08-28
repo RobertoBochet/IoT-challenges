@@ -1,0 +1,347 @@
+[
+    {
+        "id": "b5d1af96.0416f8",
+        "type": "tab",
+        "label": "Project",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "83df7dee.f5db6",
+        "type": "tcp in",
+        "z": "b5d1af96.0416f8",
+        "name": "get Cooja output",
+        "server": "client",
+        "host": "localhost",
+        "port": "60008",
+        "datamode": "stream",
+        "datatype": "utf8",
+        "newline": "\\n",
+        "topic": "",
+        "base64": false,
+        "x": 180,
+        "y": 80,
+        "wires": [
+            [
+                "a3c9af94.3875"
+            ]
+        ]
+    },
+    {
+        "id": "3c0faa2d.2235be",
+        "type": "join",
+        "z": "b5d1af96.0416f8",
+        "name": "merge to rate limit",
+        "mode": "custom",
+        "build": "array",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "accumulate": false,
+        "timeout": "20",
+        "count": "",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "num",
+        "reduceFixup": "",
+        "x": 190,
+        "y": 460,
+        "wires": [
+            [
+                "582576ae.d1e9d"
+            ]
+        ]
+    },
+    {
+        "id": "a3c9af94.3875",
+        "type": "switch",
+        "z": "b5d1af96.0416f8",
+        "name": "filter data",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "regex",
+                "v": "^#(\\d+):(\\d+):(\\d+):(\\d+)#$",
+                "vt": "str",
+                "case": false
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 600,
+        "y": 80,
+        "wires": [
+            [
+                "bc5444a4.adcad"
+            ]
+        ]
+    },
+    {
+        "id": "bc5444a4.adcad",
+        "type": "deduplicate",
+        "z": "b5d1af96.0416f8",
+        "name": "",
+        "keyproperty": "",
+        "expiry": "20",
+        "x": 170,
+        "y": 160,
+        "wires": [
+            [
+                "a785cf75.759df"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "a785cf75.759df",
+        "type": "function",
+        "z": "b5d1af96.0416f8",
+        "name": "parse input",
+        "func": "let r= /^#(\\d+):(\\d+):(\\d+):(\\d+)#$/;\n\nlet result = r.exec(msg.payload)\n\nreturn {\n    msg_id: parseInt(result[1]),\n    sensor_id: parseInt(result[2]),\n    data_type: parseInt(result[3]),\n    payload: parseInt(result[4])\n};",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 590,
+        "y": 160,
+        "wires": [
+            [
+                "1a00604.5223c2"
+            ]
+        ]
+    },
+    {
+        "id": "5ba0c5f2.dfb004",
+        "type": "debug",
+        "z": "b5d1af96.0416f8",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "x": 590,
+        "y": 660,
+        "wires": []
+    },
+    {
+        "id": "1a00604.5223c2",
+        "type": "switch",
+        "z": "b5d1af96.0416f8",
+        "name": "",
+        "property": "data_type",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "0",
+                "vt": "num"
+            },
+            {
+                "t": "eq",
+                "v": "1",
+                "vt": "num"
+            },
+            {
+                "t": "eq",
+                "v": "2",
+                "vt": "num"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 3,
+        "x": 150,
+        "y": 320,
+        "wires": [
+            [
+                "f7a3d512.ed2e78"
+            ],
+            [
+                "da3dfd7c.736e5"
+            ],
+            [
+                "915edcec.6c266"
+            ]
+        ]
+    },
+    {
+        "id": "f7a3d512.ed2e78",
+        "type": "range",
+        "z": "b5d1af96.0416f8",
+        "minin": "0",
+        "maxin": "255",
+        "minout": "16",
+        "maxout": "26",
+        "action": "scale",
+        "round": false,
+        "property": "payload",
+        "name": "remap temperature",
+        "x": 350,
+        "y": 280,
+        "wires": [
+            [
+                "4c7dfc27.8d8494"
+            ]
+        ]
+    },
+    {
+        "id": "da3dfd7c.736e5",
+        "type": "range",
+        "z": "b5d1af96.0416f8",
+        "minin": "0",
+        "maxin": "255",
+        "minout": "-5",
+        "maxout": "5",
+        "action": "scale",
+        "round": false,
+        "property": "payload",
+        "name": "remap voltage",
+        "x": 340,
+        "y": 320,
+        "wires": [
+            [
+                "4c7dfc27.8d8494"
+            ]
+        ]
+    },
+    {
+        "id": "915edcec.6c266",
+        "type": "range",
+        "z": "b5d1af96.0416f8",
+        "minin": "0",
+        "maxin": "255",
+        "minout": "30",
+        "maxout": "80",
+        "action": "scale",
+        "round": false,
+        "property": "payload",
+        "name": "remap humidity",
+        "x": 340,
+        "y": 360,
+        "wires": [
+            [
+                "4c7dfc27.8d8494"
+            ]
+        ]
+    },
+    {
+        "id": "4c7dfc27.8d8494",
+        "type": "function",
+        "z": "b5d1af96.0416f8",
+        "name": "change shape",
+        "func": "return {\n    payload: [msg.data_type, msg.payload]\n};",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 580,
+        "y": 320,
+        "wires": [
+            [
+                "3c0faa2d.2235be"
+            ]
+        ]
+    },
+    {
+        "id": "582576ae.d1e9d",
+        "type": "function",
+        "z": "b5d1af96.0416f8",
+        "name": "merge data",
+        "func": "let payload = [];\n\nmsg.payload.forEach(x => {\n   if(!(x[0] in payload)) payload[x[0]] = [];\n   \n   payload[x[0]].push(x[1]);\n});\n\n\nreturn {\n    payload: payload\n};",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 410,
+        "y": 460,
+        "wires": [
+            [
+                "dd68991e.3cd838"
+            ]
+        ]
+    },
+    {
+        "id": "dd68991e.3cd838",
+        "type": "function",
+        "z": "b5d1af96.0416f8",
+        "name": "Average",
+        "func": "let payload = [];\n\nObject.keys(msg.payload).forEach(i => {\n   payload[i] = msg.payload[i].reduce((a, b) => a + b) / msg.payload[i].length\n});\n\nreturn {\n    payload: payload\n};",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 600,
+        "y": 460,
+        "wires": [
+            [
+                "7ca80ee7.f2e45"
+            ]
+        ]
+    },
+    {
+        "id": "becb4205.67ce88",
+        "type": "mqtt out",
+        "z": "b5d1af96.0416f8",
+        "name": "send to TS",
+        "topic": "channels/1126451/publish/03PQP9AB8SVIVPKY",
+        "qos": "0",
+        "retain": "false",
+        "broker": "389add7f.9a5022",
+        "x": 590,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "27fc732c.64e0e4",
+        "type": "function",
+        "z": "b5d1af96.0416f8",
+        "name": "prepare mqtt message",
+        "func": "return {\n    payload:  Object.keys(msg.payload).map(k => `${k}=${msg.payload[k]}`).join(\"&\")\n};",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 360,
+        "y": 560,
+        "wires": [
+            [
+                "5ba0c5f2.dfb004",
+                "becb4205.67ce88"
+            ]
+        ]
+    },
+    {
+        "id": "7ca80ee7.f2e45",
+        "type": "function",
+        "z": "b5d1af96.0416f8",
+        "name": "set field",
+        "func": "let payload = {};\n\nObject.keys(msg.payload).forEach(i => {\n    switch(parseInt(i)) {\n        case 0:\n            payload[\"field1\"] = msg.payload[i];\n            break;\n        case 1:\n            payload[\"field2\"] = msg.payload[i];\n            break;\n        case 2:\n            payload[\"field3\"] = msg.payload[i];\n            break;\n    }\n});\n\nreturn {\n    payload: payload\n};",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 160,
+        "y": 560,
+        "wires": [
+            [
+                "27fc732c.64e0e4"
+            ]
+        ]
+    },
+    {
+        "id": "389add7f.9a5022",
+        "type": "mqtt-broker",
+        "z": "",
+        "name": "",
+        "broker": "mqtt.thingspeak.com",
+        "port": "1883",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": false,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": ""
+    }
+]
