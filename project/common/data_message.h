@@ -9,7 +9,9 @@ typedef enum {
 } msg_type_t;
 
 typedef enum {
-	temperature
+	temperature = 0,
+	voltage = 1,
+	humidity = 2
 } data_type_t;
 
 typedef nx_struct {
