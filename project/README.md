@@ -33,7 +33,15 @@ The nodes communicate with a custom message, which is used both for data transmi
 
 #### Sensor node
 
+When the sensor boots a random period (between 4s and 20s) is chosen as time interval between two data. It is also set the data type.
+
+When the timer elapsed a new package is forged and the sequential counter of the packet is incremented. When the packet is sent a second timer is been started with a duration of one second. If this second timer elapsed the packet is consider as lost and the packet is resent. The timer for the resend action is canceled if the correct ACK arrived or if a new data have to be transmitted.
+
+The node ignore all the packets which are not an `ack` or an `ack_relayed` and the ack with a `sensor_id` different from its own.
+
 #### Gateway
+
+The gateways when a packet `sensor_data` or `ack` is arrived they relay it with the only changes of setting the `gateway_id` parameter and changing the `msg_type` in corresponding relayed type in order to avoid loop issue; a gateway will not relays a packet which are already relayed.
 
 #### Network server
 
