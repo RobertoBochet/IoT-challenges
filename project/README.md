@@ -97,3 +97,9 @@ Another approach can be used a dynamical data structure, but in small devices ca
 Any way both this method presenting a defect: If for any reason two packets from the same sensor arrived in a different order than that of sending the oldest one will be ignored by the network server.
 
 With the use of the block on `Node-RED` (which is supposed running with many more available resources than which of the mote) also this behavior is handled.
+
+### Header compression
+
+In order to reduce the overhead of the transmitted packets the header can be compressed giving less than a word(`8bit`) for a single property. The current dimension of the custom message is of `40bit` that can be reduced merged some property with some bitmap. `msg_type` and `data_type` required only `2bit` each one, they can be merged in the same word with `4bit` of padding, the new size of the message will becomes `32bit`. Also the `msg_id` can be reduced taking into account the time window of the deduplication block, and the maximum frequency of the sensor. If the dimension of the network is known a priori also the `sensor_id` size can be reduced.
+
+In the our case a possible choice for the packet size could be `6bit` for `msg_id`, `6bit` for `sensor_id`, `2bit` for `msg_type`, `2bit` for `data_type` and `8bit` for `data`, with a packet of `24bit`.
