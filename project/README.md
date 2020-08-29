@@ -78,7 +78,13 @@ In order to extend the network structure it is useful notice that the gateways w
 
 If it is simulated, this scenario will generated several errors of this type, in particular from the network server. This happened because the sensor nodes `2` and `4` has multiple path to reach the network server, so the same packet is delivered from both the gateways at the same time and because of the limited buffer of one packet of the network server only one ACK is sent with success.
 
-To solve this issue would be sufficient to implement a transmission buffer in the network server with a circular buffer. The same approach that can be adopted with the gateway to improve the reliability of the network.
+To solve this issue would be sufficient to implement a transmission buffer in the network server with a circular buffer. The same approach that can be adopted with the gateways to improve the reliability of the network.
+
+### Limit of one sensor data
+
+As implementation choice in the case a node has a new data ready but it has not already received the ACK related to the previous packet will discard the old data and it will not retry to send it when the timer elapsed. This behavior introduces a possibility loss of data.
+
+To reduce the possibility of data loss a transmission buffer can be implemented taking care to consider a behavior to avoid the buffer saturation with the possible consequence of new-data loss.
 
 ### Messages deduplication
 
