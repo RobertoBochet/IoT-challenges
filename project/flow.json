@@ -87,7 +87,7 @@
         "z": "b5d1af96.0416f8",
         "name": "",
         "keyproperty": "",
-        "expiry": "20",
+        "expiry": "60",
         "x": 170,
         "y": 160,
         "wires": [
@@ -264,7 +264,7 @@
         "id": "dd68991e.3cd838",
         "type": "function",
         "z": "b5d1af96.0416f8",
-        "name": "Average",
+        "name": "average",
         "func": "let payload = [];\n\nObject.keys(msg.payload).forEach(i => {\n   payload[i] = msg.payload[i].reduce((a, b) => a + b) / msg.payload[i].length\n});\n\nreturn {\n    payload: payload\n};",
         "outputs": 1,
         "noerr": 0,
