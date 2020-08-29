@@ -34,7 +34,7 @@ The nodes communicate with a custom message, which is used both for data transmi
 
 #### Sensor node
 
-When the sensor boots a random period (between 4s and 20s) is chosen as time interval between two data. It is also set the data type.
+When the sensor boots a random period (between `4s` and `20s`) is chosen as time interval between two data. It is also set the data type.
 
 When the timer elapsed a new package is forged and the sequential counter of the packet is incremented. When the packet is sent a second timer is been started with a duration of one second. If this second timer elapsed the packet is consider as lost and the packet is resent. The timer for the resend action is canceled if the correct ACK arrived or if a new data have to be transmitted.
 
@@ -56,7 +56,7 @@ It can be happened that a duplicate messages reach the network server as a resul
 
 The messages are parsed with the same regex that was seen above.
 
-The data values provided by the network are all unsigned int of 8bit, so it is applied a linear transformation to get the data values in the SI.
+The data values provided by the network are all unsigned integer of `8bit`, so it is applied a linear transformation to get the data values in the SI.
 
 The useless data are removed from the messages and the payload becomes an array with the `data_type` element set to the data value.
 
